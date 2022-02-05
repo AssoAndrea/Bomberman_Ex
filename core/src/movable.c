@@ -1,4 +1,12 @@
 #include "bomberman.h"
+#include <stdio.h>
+
+void move_player(level_t *level, movable_t *movable, const float delta_x, const float delta_y)
+{
+    printf("move %f", delta_x);
+    movable->rect.x += delta_x;
+    movable->rect.y += delta_y;
+}
 
 int32_t move_on_level(level_t *level, movable_t *movable, const float delta_x, const float delta_y)
 {

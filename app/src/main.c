@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     bmp_create_texture(img_data, 3, renderer, &ground_texture,NULL);
     SDL_free(img_data);
     
-    bmp_open_file("assets//floor.bmp", "rb", &img_data); //explodable
+    bmp_open_file("assets//explodable.bmp", "rb", &img_data); //explodable
     bmp_create_texture(img_data, 3, renderer, &destroyable_texture,NULL);
     SDL_free(img_data);
 
@@ -79,10 +79,12 @@ int main(int argc, char **argv)
                 if (event.key.keysym.sym == SDLK_RIGHT)
                 {
                     delta_right = player0.movable.speed * (1.0 / 60);
+                    printf("right %f\n",delta_right);
                 }
                 if (event.key.keysym.sym == SDLK_LEFT)
                 {
                     delta_left = -player0.movable.speed * (1.0 / 60);
+                    printf("left %f\n", delta_left);
                 }
                 if (event.key.keysym.sym == SDLK_DOWN)
                 {
@@ -117,7 +119,7 @@ int main(int argc, char **argv)
         // SDL_RenderCopy(renderer, bmp_parser_texture, NULL, &bmp_parser_rect);
         // SDL_RenderPresent(renderer);
 
-        for (uint32_t row = 0; row < level_1.rows; row++)
+        for (uint32_t row = 0; row < level_1.rows; row++)  //draw level
         {
             for (uint32_t col = 0; col < level_1.cols; col++)
             {
@@ -144,10 +146,10 @@ int main(int argc, char **argv)
             }
         }
  
-        move_on_level(&level_1, &player0.movable, delta_right + delta_left, delta_down + delta_up);
+        move_player(&level_1, &player0.movable, delta_right + delta_left, delta_down + delta_up);
 
-         SDL_RenderCopy(renderer,player0.movable.texture,NULL,&player0.movable.rect);
-         SDL_RenderPresent(renderer);
+        SDL_RenderCopy(renderer,player0.movable.texture,NULL,&player0.movable.rect);
+        SDL_RenderPresent(renderer);
     }
  
 	SDL_Quit();

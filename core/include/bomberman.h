@@ -30,6 +30,7 @@ typedef struct movable
 // try moving an object on the level
 int32_t move_on_level(level_t* level, movable_t* movable, const float delta_x, const float delta_y);
 
+void move_player(level_t *level, movable_t *movable, const float delta_x, const float delta_y);
 
 typedef struct bomberman
 {
