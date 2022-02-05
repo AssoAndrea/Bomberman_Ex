@@ -4,43 +4,63 @@
 #include "bmp_parser.h"
 #include "stdio.h"
 
-
+SDL_Rect ZeroRect()
+{
+    SDL_Rect rect = {0, 0, 0, 0};
+    return rect;
+}
 
 int main(int argc, char **argv)
 {
+    SDL_Init(SDL_INIT_VIDEO);
 
     level_t level_1;
     level_init(&level_1, 8, 8, 64, level_1_cells);
- 
-    bomberman_t player0;
-    player0.movable.x = 100;
-    player0.movable.y = 100;
-    player0.movable.width = 32;
-    player0.movable.height = 32;
-    player0.movable.speed = 48;
- 
-    SDL_Init(SDL_INIT_VIDEO);
+
+
  
     SDL_Window *window = SDL_CreateWindow("Bomberman",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,level_1.cols * level_1.cell_size,level_1.rows * level_1.cell_size, 0);
  
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
+    //parser test
     SDL_Texture *bmp_parser_texture;
+    Uint8 *bmp_parser_img_data;
+    bmp_open_file("Capture.bmp","rb",&bmp_parser_img_data);
+    SDL_Rect bmp_parser_rect;
+    bmp_parser_rect.x = 20;
+    bmp_parser_rect.y = 20;
+    bmp_create_texture(bmp_parser_img_data, 3, renderer, &bmp_parser_texture, &bmp_parser_rect);
+    SDL_free(bmp_parser_img_data);
+
+    bomberman_t player0;
+    player0.movable.speed = 48;
+    player0.movable.rect = ZeroRect();
+    player0.movable.texture = NULL;
     Uint8 *img_data;
+    bmp_open_file("assets//Bman.bmp", "rb", &img_data);
+    bmp_create_texture(img_data, 3, renderer, &player0.movable.texture, &player0.movable.rect);
 
-    bmp_open_file("Capture.bmp","rb",&img_data);
-
-    SDL_Rect img_rect;
-    img_rect.x = 20;
-    img_rect.y = 20;
-
-
-    bmp_create_texture(img_data, 3, renderer, &bmp_parser_texture, &img_rect);
+    player0.movable.rect.x = 20;
+    player0.movable.rect.y = 20;
+    SDL_free(img_data);
 
     SDL_Rect cell_rect = {0, 0, level_1.cell_size, level_1.cell_size};
- 
-    SDL_Rect player0_rect = {0, 0, player0.movable.width, player0.movable.height};
- 
+    SDL_Texture *wall_texture;
+    SDL_Texture *ground_texture;
+    SDL_Texture *destroyable_texture;
+    bmp_open_file("assets//wall.bmp", "rb", &img_data); //wall
+    bmp_create_texture(img_data, 3, renderer, &wall_texture,NULL);
+    SDL_free(img_data);
+
+    bmp_open_file("assets//floor.bmp", "rb", &img_data); //floor
+    bmp_create_texture(img_data, 3, renderer, &ground_texture,NULL);
+    SDL_free(img_data);
+    
+    bmp_open_file("assets//floor.bmp", "rb", &img_data); //explodable
+    bmp_create_texture(img_data, 3, renderer, &destroyable_texture,NULL);
+    SDL_free(img_data);
+
     float delta_right = 0;
     float delta_left = 0;
     float delta_down = 0;
@@ -94,10 +114,8 @@ int main(int argc, char **argv)
             }
         }
 
-        SDL_RenderCopy(renderer, bmp_parser_texture, NULL, &img_rect);
-        SDL_RenderPresent(renderer);
-
-        continue;
+        // SDL_RenderCopy(renderer, bmp_parser_texture, NULL, &bmp_parser_rect);
+        // SDL_RenderPresent(renderer);
 
         for (uint32_t row = 0; row < level_1.rows; row++)
         {
@@ -107,30 +125,28 @@ int main(int argc, char **argv)
                 int32_t cell_texture = cell & 0xff;
                 cell_rect.x = col * level_1.cell_size;
                 cell_rect.y = row * level_1.cell_size;
- 
+                SDL_Texture *textureToDraw = NULL;
+
                 if (cell_texture == BLOCK_GROUND)
                 {
-                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-                    SDL_RenderFillRect(renderer, &cell_rect);
+                    textureToDraw = ground_texture;
                 }
                 else if (cell_texture == BLOCK_WALL)
                 {
-                    SDL_SetRenderDrawColor(renderer, 100, 50, 0, 255);
-                    SDL_RenderFillRect(renderer, &cell_rect);
+                    textureToDraw = wall_texture;
                 }
                 else if (cell_texture == BLOCK_DESTROYABLE)
                 {
-                    SDL_SetRenderDrawColor(renderer, 0, 50, 50, 255);
-                    SDL_RenderFillRect(renderer, &cell_rect);
+                    textureToDraw = destroyable_texture;
                 }
+                SDL_RenderCopy(renderer,textureToDraw,NULL,&cell_rect);
+
             }
         }
  
         move_on_level(&level_1, &player0.movable, delta_right + delta_left, delta_down + delta_up);
-        player0_rect.x = player0.movable.x;
-        player0_rect.y = player0.movable.y;
 
-         SDL_RenderCopy(renderer,bmp_parser_texture,NULL,&player0_rect);
+         SDL_RenderCopy(renderer,player0.movable.texture,NULL,&player0.movable.rect);
          SDL_RenderPresent(renderer);
     }
  

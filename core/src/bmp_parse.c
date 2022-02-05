@@ -20,8 +20,11 @@ int bmp_create_texture(Uint8 *data,const Uint8 channels,SDL_Renderer *renderer,S
 
     SDL_memcpy(&bmp_img.width, data + IMG_WIDTH_OFF, 4);
     SDL_memcpy(&bmp_img.height, data + IMG_HEIGHT_OFF, 4);
-    img_rect->w = bmp_img.width;
-    img_rect->h = bmp_img.height;
+    if(img_rect)
+    {
+        img_rect->w = bmp_img.width;
+        img_rect->h = bmp_img.height;
+    }
     *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGR24, SDL_TEXTUREACCESS_STATIC, bmp_img.width, bmp_img.height);
     if (!(*texture))
     {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <SDL.h>
 
 #define BLOCK_MASK_UNWALKABLE 0x0100
 #define BLOCK_MASK_TELEPORT 0x0200
@@ -20,11 +21,9 @@ typedef struct level
 
 typedef struct movable
 {
-    float x;
-    float y;
-    uint32_t width;
-    uint32_t height;
     float speed;
+    SDL_Rect rect;
+    SDL_Texture *texture;
 } movable_t;
 
 
