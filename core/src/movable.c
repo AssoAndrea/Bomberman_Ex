@@ -36,7 +36,6 @@ int check_collisions(level_t *level, movable_t *movable, float x, float y)
     int32_t cell_4 = get_cell(level, cell_x, cell_y);
 
 
-    //printf("x: %d y: %d \n",cell_x,cell_y);
 
     if (cell_1 & BLOCK_WALL || cell_2 & BLOCK_WALL || cell_3 & BLOCK_WALL || cell_4 & BLOCK_WALL)
     {
