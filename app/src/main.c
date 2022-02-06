@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     SDL_free(bmp_parser_img_data);
 
     bomberman_t player0;
-    player0.movable.speed = 48;
+    player0.movable.speed = 60;
     player0.movable.rect = ZeroRect();
     player0.movable.texture = NULL;
     Uint8 *img_data;
@@ -79,18 +79,16 @@ int main(int argc, char **argv)
                 if (event.key.keysym.sym == SDLK_RIGHT)
                 {
                     delta_right = player0.movable.speed * (1.0 / 60);
-                    printf("right %f\n",delta_right);
                 }
-                if (event.key.keysym.sym == SDLK_LEFT)
+                else if (event.key.keysym.sym == SDLK_LEFT)
                 {
                     delta_left = -player0.movable.speed * (1.0 / 60);
-                    printf("left %f\n", delta_left);
                 }
-                if (event.key.keysym.sym == SDLK_DOWN)
+                else if (event.key.keysym.sym == SDLK_DOWN)
                 {
                     delta_down = player0.movable.speed * (1.0 / 60);
                 }
-                if (event.key.keysym.sym == SDLK_UP)
+                else if (event.key.keysym.sym == SDLK_UP)
                 {
                     delta_up = -player0.movable.speed * (1.0 / 60);
                 }

@@ -1,4 +1,5 @@
 #include "bomberman.h"
+#include <stdio.h>
 
 int level_init(level_t *level, const uint32_t cols, const uint32_t rows, const uint32_t cell_size, int32_t *cells)
 {
@@ -22,4 +23,19 @@ int32_t level_cell(level_t *level, const uint32_t col, const uint32_t row)
         return -1;
 
     return level->cells[row * level->cols + col];
+}
+
+int32_t get_cell(level_t *level, const int x, const int y)
+{
+    if (!level->cells)
+        return -1;
+    
+    int cell_to_check = y * level->cols + x;
+    if (cell_to_check > (level->cols * level->rows))
+    {
+        printf("errore %d x: %d y%d  \n", cell_to_check,x,y);
+        return -1;
+    }
+    
+    return level->cells[cell_to_check];
 }

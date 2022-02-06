@@ -1,10 +1,66 @@
 #include "bomberman.h"
 #include <stdio.h>
 
+
+
+int check_map_border(level_t *level,movable_t *movable, int x, int y)
+{
+    if(x < 0 || x + movable->rect.w > level->cols * level->cell_size ||
+       y < 0 || y + movable->rect.h > level->rows * level->cell_size )
+        return 1;
+    else
+        return 0;
+}
+
+int check_collisions(level_t *level, movable_t *movable, float x, float y)
+{
+    uint32_t cell_x;
+    uint32_t cell_y;
+    int half_h = movable->rect.h / 2;
+    float size_reduction = 10;
+
+    cell_x = (x + size_reduction) / level->cell_size;
+    cell_y = (y + half_h + size_reduction) / level->cell_size;
+    int32_t cell_1 = get_cell(level,cell_x,cell_y);
+
+    cell_x = (x + movable->rect.w - size_reduction) / level->cell_size;
+    cell_y = (y + half_h + size_reduction) /level->cell_size;
+    int32_t cell_2 = get_cell(level, cell_x, cell_y);
+
+    cell_x = (x + size_reduction) / level->cell_size;
+    cell_y = (y + movable->rect.h - size_reduction)/level->cell_size;
+    int32_t cell_3 = get_cell(level, cell_x, cell_y);
+
+    cell_x = (x + movable->rect.w - size_reduction) / level->cell_size;
+    cell_y = (y + movable->rect.h - size_reduction) /level->cell_size;
+    int32_t cell_4 = get_cell(level, cell_x, cell_y);
+
+
+    //printf("x: %d y: %d \n",cell_x,cell_y);
+
+    if (cell_1 & BLOCK_WALL || cell_2 & BLOCK_WALL || cell_3 & BLOCK_WALL || cell_4 & BLOCK_WALL)
+    {
+        return 1;
+    }
+    else
+        return 0;
+}
+
 void move_player(level_t *level, movable_t *movable, const float delta_x, const float delta_y)
 {
-    printf("move %f", delta_x);
-    movable->rect.x += delta_x;
+    if (delta_x == 0 && delta_y == 0)
+    {
+        return;
+    }
+    
+    int new_x = (int)(movable->rect.x + delta_x);
+    int new_y = (int)(movable->rect.y + delta_y);
+    if (check_map_border(level,movable,new_x,new_y) || check_collisions(level,movable,new_x,new_y))
+    {
+        return;
+    }
+
+    movable->rect.x = new_x;
     movable->rect.y += delta_y;
 }
 

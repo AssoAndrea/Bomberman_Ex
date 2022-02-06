@@ -22,6 +22,8 @@ typedef struct level
 typedef struct movable
 {
     float speed;
+    float x;
+    float y;
     SDL_Rect rect;
     SDL_Texture *texture;
 } movable_t;
@@ -44,3 +46,5 @@ typedef struct bomberman
 int level_init(level_t *level, const uint32_t cols, const uint32_t rows, const uint32_t cell_size, int32_t *cells);
 // get the cell content at the specified coordinates
 int32_t level_cell(level_t* level, const uint32_t col, const uint32_t row);
+
+int32_t get_cell(level_t *level, const int x, const int y);
