@@ -8,7 +8,23 @@
 #define PIXEL_DATA_SIZE_OFF 34
 #define ALIGNMENT 4
 
+// void ReadBinFile(char *fileName,Uint8 *pngData)
+// {
+//     unsigned char buffer[131072];
+//     FILE *ptr;
 
+//     ptr = fopen(fileName, "rb"); // r for read, b for binary
+
+//     fread(buffer, sizeof(buffer), 1, ptr); // read 10 bytes to our buffer
+//     pngData = buffer;
+// }
+
+// void Create_Texture(SDL_Texture **texture, SDL_Renderer *renderer, Uint8 *pixels)
+// {
+//     *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGR24, SDL_TEXTUREACCESS_STATIC, 64, 128);
+//     SDL_UpdateTexture(*texture, NULL, pixels, 0);
+//     SDL_free(pixels);
+// }
 
 int bmp_create_texture(Uint8 *data,const Uint8 channels,SDL_Renderer *renderer,SDL_Texture **texture,SDL_Rect *img_rect)
 {
@@ -33,7 +49,7 @@ int bmp_create_texture(Uint8 *data,const Uint8 channels,SDL_Renderer *renderer,S
         format = SDL_PIXELFORMAT_BGR24;
 
     *texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STATIC, bmp_img.width, bmp_img.height);
-
+    
     if (format == SDL_PIXELFORMAT_BGRA32)
         SDL_SetTextureBlendMode(*texture, SDL_BLENDMODE_BLEND);
 
