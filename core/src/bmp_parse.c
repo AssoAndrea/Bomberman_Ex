@@ -25,7 +25,18 @@ int bmp_create_texture(Uint8 *data,const Uint8 channels,SDL_Renderer *renderer,S
         img_rect->w = bmp_img.width;
         img_rect->h = bmp_img.height;
     }
-    *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_BGR24, SDL_TEXTUREACCESS_STATIC, bmp_img.width, bmp_img.height);
+
+    Uint32 format;
+    if(channels == 4)
+        format = SDL_PIXELFORMAT_BGRA32;
+    else
+        format = SDL_PIXELFORMAT_BGR24;
+
+    *texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STATIC, bmp_img.width, bmp_img.height);
+
+    if (format == SDL_PIXELFORMAT_BGRA32)
+        SDL_SetTextureBlendMode(*texture, SDL_BLENDMODE_BLEND);
+
     if (!(*texture))
     {
         perror("error on create texture: ");

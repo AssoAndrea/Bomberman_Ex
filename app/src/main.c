@@ -3,6 +3,7 @@
 #include "level_1.h"
 #include "bmp_parser.h"
 #include "stdio.h"
+#include "png_parser.h"
 
 SDL_Rect ZeroRect()
 {
@@ -17,29 +18,33 @@ int main(int argc, char **argv)
     level_t level_1;
     level_init(&level_1, 8, 8, 64, level_1_cells);
 
+    Uint8 *pngData;
 
- 
+    //png_open_file("python//Bman_F_f01.png", &pngData);
+
     SDL_Window *window = SDL_CreateWindow("Bomberman",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,level_1.cols * level_1.cell_size,level_1.rows * level_1.cell_size, 0);
  
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     //parser test
-    SDL_Texture *bmp_parser_texture;
-    Uint8 *bmp_parser_img_data;
-    bmp_open_file("Capture.bmp","rb",&bmp_parser_img_data);
-    SDL_Rect bmp_parser_rect;
-    bmp_parser_rect.x = 20;
-    bmp_parser_rect.y = 20;
-    bmp_create_texture(bmp_parser_img_data, 3, renderer, &bmp_parser_texture, &bmp_parser_rect);
-    SDL_free(bmp_parser_img_data);
+    // SDL_Texture *bmp_parser_texture;
+    // Uint8 *bmp_parser_img_data;
+    // bmp_open_file("Capture.bmp","rb",&bmp_parser_img_data);
+    // SDL_Rect bmp_parser_rect;
+    // bmp_parser_rect.x = 20;
+    // bmp_parser_rect.y = 20;
+    // bmp_create_texture(bmp_parser_img_data, 3, renderer, &bmp_parser_texture, &bmp_parser_rect);
+    // SDL_free(bmp_parser_img_data);
 
     bomberman_t player0;
     player0.movable.speed = 60;
     player0.movable.rect = ZeroRect();
+    player0.movable.rect.w = 64;
+    player0.movable.rect.h = 128;
     player0.movable.texture = NULL;
     Uint8 *img_data;
-    bmp_open_file("assets//Bman.bmp", "rb", &img_data);
-    bmp_create_texture(img_data, 3, renderer, &player0.movable.texture, &player0.movable.rect);
+    bmp_open_file("assets//bman_ab.bmp", "rb", &img_data);
+    bmp_create_texture(img_data, 4, renderer, &player0.movable.texture, &player0.movable.rect);
 
     player0.movable.rect.x = 20;
     player0.movable.rect.y = 20;

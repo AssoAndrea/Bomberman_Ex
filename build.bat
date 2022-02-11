@@ -1,1 +1,1 @@
-clang.exe -o .\bin\bomberman.exe -I .\core\include -I .\SDL2-2.0.20\include\ -L .\SDL2-2.0.20\lib\x64\ .\app\src\main.c .\core\src\*.c -Xlinker /subsystem:console -lSDL2main -lSDL2 -lshell32
+clang.exe -o .\bin\bomberman.exe -I .\core\include -I .\SDL2-2.0.20\include\ -I .\zlib\ -L .\SDL2-2.0.20\lib\x64\ -L .\zlib\ .\app\src\main.c .\core\src\*.c -Xlinker /subsystem:console -lSDL2main -lSDL2 -lzlibwapi -lshell32
