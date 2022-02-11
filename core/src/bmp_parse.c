@@ -26,7 +26,7 @@
 //     SDL_free(pixels);
 // }
 
-int bmp_create_texture(Uint8 *data,const Uint8 channels,SDL_Renderer *renderer,SDL_Texture **texture,SDL_Rect *img_rect)
+int bmp_create_texture(Uint8 *data,const Uint8 channels,SDL_Renderer *renderer,SDL_Texture **texture,SDL_Rect *img_rect,Color_t mul_color)
 {
     BMP_image_t bmp_img;
     
@@ -79,6 +79,18 @@ int bmp_create_texture(Uint8 *data,const Uint8 channels,SDL_Renderer *renderer,S
         Uint8 *bmp_row = pixel_start_off + ((bmp_img.height - 1) - i) * padded_row_size;
         SDL_memcpy(texture_row, bmp_row, row_size);
     }
+
+    float r, g, b;
+    r = mul_color.r / 255;
+    g = mul_color.g / 255;
+    b = mul_color.b / 255;
+    for (size_t i = 0; i < row_size * bmp_img.height; i+=channels)
+    {
+        pixels[i] = (pixels[i] * r);
+        pixels[i + 1] = (pixels[i + 1] * g);
+        pixels[i + 2] = (pixels[i + 2] * b);
+    }
+    
     SDL_UpdateTexture(*texture, NULL, pixels, row_size);
     SDL_free(pixels);
     return 0;

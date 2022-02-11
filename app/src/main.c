@@ -5,6 +5,7 @@
 #include "stdio.h"
 #include "png_parser.h"
 
+
 SDL_Rect ZeroRect()
 {
     SDL_Rect rect = {0, 0, 0, 0};
@@ -36,6 +37,9 @@ int main(int argc, char **argv)
     // bmp_create_texture(bmp_parser_img_data, 3, renderer, &bmp_parser_texture, &bmp_parser_rect);
     // SDL_free(bmp_parser_img_data);
 
+    Color_t white = {255, 255, 255};
+    Color_t red = {0, 255, 0};
+    printf("w %d \n", white.r);
     bomberman_t player0;
     player0.movable.speed = 60;
     player0.movable.rect = ZeroRect();
@@ -44,7 +48,7 @@ int main(int argc, char **argv)
     player0.movable.texture = NULL;
     Uint8 *img_data;
     bmp_open_file("assets//bman_ab.bmp", "rb", &img_data);
-    bmp_create_texture(img_data, 4, renderer, &player0.movable.texture, &player0.movable.rect);
+    bmp_create_texture(img_data, 4, renderer, &player0.movable.texture, &player0.movable.rect,white);
 
     player0.movable.rect.x = 20;
     player0.movable.rect.y = 20;
@@ -55,15 +59,15 @@ int main(int argc, char **argv)
     SDL_Texture *ground_texture;
     SDL_Texture *destroyable_texture;
     bmp_open_file("assets//wall.bmp", "rb", &img_data); //wall
-    bmp_create_texture(img_data, 3, renderer, &wall_texture,NULL);
+    bmp_create_texture(img_data, 3, renderer, &wall_texture,NULL,white);
     SDL_free(img_data);
 
     bmp_open_file("assets//floor.bmp", "rb", &img_data); //floor
-    bmp_create_texture(img_data, 3, renderer, &ground_texture,NULL);
+    bmp_create_texture(img_data, 3, renderer, &ground_texture,NULL,white);
     SDL_free(img_data);
     
     bmp_open_file("assets//explodable.bmp", "rb", &img_data); //explodable
-    bmp_create_texture(img_data, 3, renderer, &destroyable_texture,NULL);
+    bmp_create_texture(img_data, 3, renderer, &destroyable_texture,NULL,white);
     SDL_free(img_data);
 
     float delta_right = 0;
