@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 
     clock_t start = clock();  //time
     clock_t start_send_timer = clock();  //time
-    float send_data_timer = (float)1 / (float)10;
+    float send_data_timer = (float)1 / (float)15;
 
     int running = 1;
     while (running)
