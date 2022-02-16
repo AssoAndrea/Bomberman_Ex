@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "level_1.h": "c",
-        "bomberman.h": "c"
+        "bomberman.h": "c",
+        "bmp_parser.h": "c"
     }
 }

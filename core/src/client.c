@@ -192,22 +192,35 @@ char *receive_data()
         inet_ntop(AF_INET, &sender_in.sin_addr, addr_as_string, 64);
         printf("received %d bytes from %s:%d\n", len, addr_as_string, ntohs(sender_in.sin_port));
 
-        char type[4];
+        char type[5];
         SDL_memcpy(type, buffer, 4);
+        type[4] = '\0';
+        printf("type = %s\n", type);
 
-        if (SDL_strcmp(P_SND_AUTH,type))
+        if (SDL_strcmp(P_SND_AUTH,type)==0)
         {
             pk_snd_auth_t auth_packet;
             SDL_memcpy(&auth_packet, buffer, sizeof(pk_snd_auth_t));
             auth = auth_packet.auth;
-            printf("auth rcvd: %d", auth);
+            if (auth == 1)
+            {
+                local_player = player0;
+                remote_player = player1;
+            }else
+            {
+                local_player = player1;
+                remote_player = player0;
+            }
+            printf("local pos is: %d", local_player.movable.rect.x);
+
+            
         }
-        else if(SDL_strcmp(P_POSITION,type))
+        else if(SDL_strcmp(P_POSITION,type)==0)
         {
             pk_position_t pos_packet;
             SDL_memcpy(&pos_packet, buffer, sizeof(pk_position_t));
-            player1.movable.rect.x = pos_packet.x;
-            player1.movable.rect.y = pos_packet.y;
+            remote_player.movable.rect.x = pos_packet.x;
+            remote_player.movable.rect.y = pos_packet.y;
         }
         
     }

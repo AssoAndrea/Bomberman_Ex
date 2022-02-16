@@ -17,6 +17,9 @@ SDL_Rect ZeroRect()
 
 bomberman_t player0;
 bomberman_t player1;
+bomberman_t local_player;
+bomberman_t remote_player;
+
 level_t level_1;
 
 int main(int argc, char **argv)
@@ -50,7 +53,6 @@ int main(int argc, char **argv)
     player0.movable.rect.y = 20;
     SDL_free(img_data);
     #pragma endregion
-
 
     #pragma region player1
     
@@ -188,7 +190,7 @@ int main(int argc, char **argv)
         }
         #pragma endregion
  
-        move_player(&level_1, &player0.movable, delta_right + delta_left, delta_down + delta_up);
+        move_player(&level_1, &local_player.movable, delta_right + delta_left, delta_down + delta_up);
 
         //server
         if (client_is_authorized()==0)
@@ -200,7 +202,7 @@ int main(int argc, char **argv)
             {
                 //printf("elapsed time = %f\n", elapsed_time);
                 start_send_timer = clock();
-                send_position(player0.movable.rect.x,player0.movable.rect.y);
+                send_position(local_player.movable.rect.x,local_player.movable.rect.y);
 
             }
         }
@@ -208,8 +210,8 @@ int main(int argc, char **argv)
         receive_data();
 
 
-        SDL_RenderCopy(renderer,player0.movable.texture,NULL,&player0.movable.rect);
-        SDL_RenderCopy(renderer,player1.movable.texture,NULL,&player1.movable.rect);
+        SDL_RenderCopy(renderer,local_player.movable.texture,NULL,&local_player.movable.rect);
+        SDL_RenderCopy(renderer,remote_player.movable.texture,NULL,&remote_player.movable.rect);
         SDL_RenderPresent(renderer);
 
     }

@@ -40,7 +40,8 @@ typedef struct bomberman
     uint32_t dropped_bombs;
     uint32_t bomb_power;
 } bomberman_t;
-
+extern bomberman_t local_player;
+extern bomberman_t remote_player;
 extern bomberman_t player0;
 extern bomberman_t player1;
 extern level_t level_1;
