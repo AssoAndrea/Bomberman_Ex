@@ -11,6 +11,7 @@
 #define BLOCK_WALL 1
 #define BLOCK_DESTROYABLE 2
 
+
 typedef struct level
 {
     int32_t *cells;     // content of the level
@@ -22,8 +23,6 @@ typedef struct level
 typedef struct movable
 {
     float speed;
-    float x;
-    float y;
     SDL_Rect rect;
     SDL_Texture *texture;
 } movable_t;
@@ -41,6 +40,10 @@ typedef struct bomberman
     uint32_t dropped_bombs;
     uint32_t bomb_power;
 } bomberman_t;
+
+extern bomberman_t player0;
+extern bomberman_t player1;
+extern level_t level_1;
 
 // initialize a level structure
 int level_init(level_t *level, const uint32_t cols, const uint32_t rows, const uint32_t cell_size, int32_t *cells);

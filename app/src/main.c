@@ -3,7 +3,10 @@
 #include "level_1.h"
 #include "bmp_parser.h"
 #include "stdio.h"
-#include "png_parser.h"
+#include "client.h"
+#include <winsock.h>
+#include <time.h>
+
 
 
 SDL_Rect ZeroRect()
@@ -12,11 +15,14 @@ SDL_Rect ZeroRect()
     return rect;
 }
 
+bomberman_t player0;
+bomberman_t player1;
+level_t level_1;
+
 int main(int argc, char **argv)
 {
     SDL_Init(SDL_INIT_VIDEO);
 
-    level_t level_1;
     level_init(&level_1, 8, 8, 64, level_1_cells);
 
     Uint8 *pngData;
@@ -27,20 +33,11 @@ int main(int argc, char **argv)
  
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    //parser test
-    // SDL_Texture *bmp_parser_texture;
-    // Uint8 *bmp_parser_img_data;
-    // bmp_open_file("Capture.bmp","rb",&bmp_parser_img_data);
-    // SDL_Rect bmp_parser_rect;
-    // bmp_parser_rect.x = 20;
-    // bmp_parser_rect.y = 20;
-    // bmp_create_texture(bmp_parser_img_data, 3, renderer, &bmp_parser_texture, &bmp_parser_rect);
-    // SDL_free(bmp_parser_img_data);
-
     Color_t white = {255, 255, 255};
     Color_t red = {0, 255, 0};
-    printf("w %d \n", white.r);
-    bomberman_t player0;
+
+    #pragma region player0
+    
     player0.movable.speed = 60;
     player0.movable.rect = ZeroRect();
     player0.movable.rect.w = 64;
@@ -49,11 +46,27 @@ int main(int argc, char **argv)
     Uint8 *img_data;
     bmp_open_file("assets//bman_ab.bmp", "rb", &img_data);
     bmp_create_texture(img_data, 4, renderer, &player0.movable.texture, &player0.movable.rect,white);
-
     player0.movable.rect.x = 20;
     player0.movable.rect.y = 20;
     SDL_free(img_data);
+    #pragma endregion
 
+
+    #pragma region player1
+    
+    player1.movable.speed = 60;
+    player1.movable.rect = ZeroRect();
+    player1.movable.rect.w = 64;
+    player1.movable.rect.h = 128;
+    player1.movable.texture = NULL;
+    bmp_open_file("assets//bman_ab.bmp", "rb", &img_data);
+    bmp_create_texture(img_data, 4, renderer, &player1.movable.texture, &player1.movable.rect,white);
+    player1.movable.rect.x = 100;
+    player1.movable.rect.y = 20;
+    SDL_free(img_data);
+    #pragma endregion
+
+    #pragma region wall
     SDL_Rect cell_rect = {0, 0, level_1.cell_size, level_1.cell_size};
     SDL_Texture *wall_texture;
     SDL_Texture *ground_texture;
@@ -61,24 +74,42 @@ int main(int argc, char **argv)
     bmp_open_file("assets//wall.bmp", "rb", &img_data); //wall
     bmp_create_texture(img_data, 3, renderer, &wall_texture,NULL,white);
     SDL_free(img_data);
+    #pragma endregion
 
+    #pragma region floor
     bmp_open_file("assets//floor.bmp", "rb", &img_data); //floor
     bmp_create_texture(img_data, 3, renderer, &ground_texture,NULL,white);
     SDL_free(img_data);
+    #pragma endregion
     
+    #pragma region explodable
     bmp_open_file("assets//explodable.bmp", "rb", &img_data); //explodable
     bmp_create_texture(img_data, 3, renderer, &destroyable_texture,NULL,white);
     SDL_free(img_data);
+    #pragma endregion
 
+    
     float delta_right = 0;
     float delta_left = 0;
     float delta_down = 0;
     float delta_up = 0;
- 
+
+    
+
+    client_init();
+    send_auth_req();
+
+    //send_position(10.0, 10.0);
+
+    clock_t start = clock();  //time
+    clock_t start_send_timer = clock();  //time
+    float send_data_timer = (float)1 / (float)10;
+
     int running = 1;
     while (running)
     {
         SDL_Event event;
+        #pragma region POLL_EVENT
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
@@ -122,10 +153,13 @@ int main(int argc, char **argv)
                 }
             }
         }
+        #pragma endregion
+
+
 
         // SDL_RenderCopy(renderer, bmp_parser_texture, NULL, &bmp_parser_rect);
         // SDL_RenderPresent(renderer);
-
+        #pragma region draw_level
         for (uint32_t row = 0; row < level_1.rows; row++)  //draw level
         {
             for (uint32_t col = 0; col < level_1.cols; col++)
@@ -152,11 +186,32 @@ int main(int argc, char **argv)
 
             }
         }
+        #pragma endregion
  
         move_player(&level_1, &player0.movable, delta_right + delta_left, delta_down + delta_up);
 
+        //server
+        if (client_is_authorized()==0)
+        {
+            keep_alive(&start);
+            clock_t cur_time = clock();
+            float elapsed_time = (float)(cur_time - start_send_timer) / CLOCKS_PER_SEC;
+            if (elapsed_time > send_data_timer)
+            {
+                //printf("elapsed time = %f\n", elapsed_time);
+                start_send_timer = clock();
+                send_position(player0.movable.rect.x,player0.movable.rect.y);
+
+            }
+        }
+        
+        receive_data();
+
+
         SDL_RenderCopy(renderer,player0.movable.texture,NULL,&player0.movable.rect);
+        SDL_RenderCopy(renderer,player1.movable.texture,NULL,&player1.movable.rect);
         SDL_RenderPresent(renderer);
+
     }
  
 	SDL_Quit();
